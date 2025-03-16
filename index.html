@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisa BTC - Hacker Style</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        async function updateData() {
+            const response = await fetch('/data');
+            const data = await response.json();
+            document.getElementById("harga").innerText = "Harga BTC Saat Ini: Rp " + formatNumber(data.harga);
+            document.getElementById("terendah").innerText = "Harga BTC Terendah: Rp " + formatNumber(data.terendah);
+            document.getElementById("beli").innerText = "Rekomendasi Beli: Rp " + formatNumber(data.beli);
+            document.getElementById("jual").innerText = "Rekomendasi Jual: Rp " + formatNumber(data.jual);
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        setInterval(updateData, 5000);
+        window.onload = updateData;
+
+        async function updateNews() {
+            const response = await fetch('/news');
+            const data = await response.json();
+            
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = '';  // Clear the existing news
+            
+            data.forEach(news => {
+                const newsItem = document.createElement('div');
+                newsItem.classList.add('news-item');
+                newsItem.innerHTML = `
+                    <h3><a href="${news.url}" target="_blank">${news.title}</a></h3>
+                    <p>${news.description}</p>
+                `;
+                newsContainer.appendChild(newsItem);
+            });
+        }
+
+        setInterval(updateNews, 600000);  // Update news every 10 minutes
+        window.onload = updateNews;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>💻 ANALISA PASAR BTC</h1>
+        <p id="harga">Mengambil data...</p>
+        <p id="terendah">Mengambil data...</p>
+        <p id="beli"></p>
+        <p id="jual"></p>
+
+        <div class="social">
+            <a href="https://www.instagram.com/cyber_starsz/profilecard/?igsh=eWM0cGUwc2hycWR6" target="_blank" class="insta-link">
+                🔗 Kunjungi Instagram Saya
+            </a>
+        </div>
+
+        <div id="news">
+            <h2>Berita Terkini Bitcoin</h2>
+            <div id="news-container"></div>
+        </div>
+    </div>
+</body>
+</html>
